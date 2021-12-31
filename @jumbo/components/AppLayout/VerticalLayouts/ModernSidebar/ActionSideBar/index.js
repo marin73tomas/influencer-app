@@ -19,6 +19,7 @@ import SidebarToggleHandler from '../../../../../../@coremat/CmtLayouts/Vertical
 import LayoutContext from '../../../../../../@coremat/CmtLayouts/LayoutContext';
 import Logo from '../../../partials/Logo';
 import ActionBarDrawer from './ActionBarDrawer';
+import { useAuth } from '../../../../../../authentication';
 import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,8 +62,10 @@ const actionsList = [
 
 let initSidebarWidth = 0;
 
+// eslint-disable-next-line react/prop-types
 const ActionSideBar = ({ width }) => {
   const classes = useStyles();
+  const { userSignOut } = useAuth();
   const router = useRouter();
   const [isDrawerOpen, setDrawerStatus] = useState(false);
   const [activeOption, setActiveOption] = useState(null);
@@ -78,19 +81,19 @@ const ActionSideBar = ({ width }) => {
     } else {
       setSidebarWidth(initSidebarWidth);
     }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSidebarOpen, width]);
 
   useEffect(() => {
     if (activeOption && !isDrawerOpen) {
       setDrawerStatus(true);
     }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeOption]);
+  }, [activeOption, isDrawerOpen]);
 
   const onItemClick = (item) => {
     if (item.label === 'Logout') {
-      router.push('/').then((r) => r);
+      userSignOut(() => {
+        router.push('/').then((r) => r);
+      });
     }
   };
 
@@ -141,7 +144,7 @@ const ActionSideBar = ({ width }) => {
 
         <CmtDropdownMenu
           onItemClick={onItemClick}
-          TriggerComponent={<CmtAvatar src={'https://via.placeholder.com/150x150'} />}
+          TriggerComponent={<CmtAvatar src={'https://via.placeholder.com/150'} />}
           items={actionsList}
         />
       </Box>

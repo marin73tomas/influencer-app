@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Button, makeStyles } from '@material-ui/core';
+import { intranet } from '../../../../../../@fake-db';
 import CmtList from '../../../../../../@coremat/CmtList';
 import NotificationItem from '../../../partials/Header/HeaderNotifications/NotificationItem';
 import EmptyResult from './EmptyResult';
@@ -19,9 +20,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const notifications = [];
-
 const Notifications = () => {
+  const { headerNotifications } = intranet;
   const classes = useStyles();
 
   return (
@@ -33,8 +33,8 @@ const Notifications = () => {
         <Button color="primary">Dismiss</Button>
       </Box>
       <Box className={classes.sectionHeading}>Latest Notifications</Box>
-      {notifications.length > 0 ? (
-        <CmtList data={notifications} renderRow={(item, index) => <NotificationItem key={index} item={item} />} />
+      {headerNotifications.length > 0 ? (
+        <CmtList data={headerNotifications} renderRow={(item, index) => <NotificationItem key={index} item={item} />} />
       ) : (
         <EmptyResult content="No record found" />
       )}

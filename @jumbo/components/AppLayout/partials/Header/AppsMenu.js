@@ -2,9 +2,13 @@ import React from 'react';
 import { Box, IconButton, Popover, Tooltip, useTheme } from '@material-ui/core';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import AppsIcon from '@material-ui/icons/Apps';
+import EmailIcon from '@material-ui/icons/Email';
 import CmtCard from '../../../../../@coremat/CmtCard';
 import CmtCardHeader from '../../../../../@coremat/CmtCard/CmtCardHeader';
 import CmtCardContent from '../../../../../@coremat/CmtCard/CmtCardContent';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ContactMailIcon from '@material-ui/icons/ContactMail';
+import ChatIcon from '@material-ui/icons/Chat';
 import CmtGridView from '../../../../../@coremat/CmtGridView';
 import CmtAvatar from '../../../../../@coremat/CmtAvatar';
 import { useRouter } from 'next/router';
@@ -38,7 +42,32 @@ const actions = [
   },
 ];
 
-const applications = [];
+const applications = [
+  {
+    name: 'Email',
+    icon: <EmailIcon style={{ color: '#0795F4' }} />,
+    bgColor: '#CDEAFD',
+    path: '/apps/mail',
+  },
+  {
+    name: 'Task',
+    icon: <CheckCircleIcon style={{ color: '#FF8C00' }} />,
+    bgColor: '#FFE8CC',
+    path: '/apps/to-do',
+  },
+  {
+    name: 'Contacts',
+    icon: <ContactMailIcon style={{ color: '#8DCD03' }} />,
+    bgColor: '#E8F5CD',
+    path: '/apps/contact',
+  },
+  {
+    name: 'Chating',
+    icon: <ChatIcon style={{ color: '#6200EE' }} />,
+    bgColor: '#E0CCFC',
+    path: '/apps/chat',
+  },
+];
 
 const appItem = (item, index, onClick) => {
   return (

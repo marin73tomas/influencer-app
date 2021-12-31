@@ -14,6 +14,7 @@ import CmtFooter from '../../../../../@coremat/CmtLayouts/Horizontal/Footer';
 
 import SideBar from '../../partials/SideBar';
 import HeaderLogin from '../../partials/Header/HeaderLogin';
+import Customizer from '../Customizer';
 import ContentLoader from '../../../ContentLoader';
 import HeaderMain from './HeaderMain';
 import HeaderTopMenus from './HeaderTopMenus';
@@ -62,6 +63,7 @@ const HorizontalTopMenu = ({ className, children }) => {
       }>
       <CmtContent>
         {children}
+        <Customizer />
         <ContentLoader />
       </CmtContent>
     </CmtHorizontalLayout>

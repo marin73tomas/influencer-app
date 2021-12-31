@@ -12,6 +12,7 @@ import 'react-notifications/lib/notifications.css';
 import 'prismjs/themes/prism-okaidia.css';
 
 import AppContextProvider from '../@jumbo/components/contextProvider/AppContextProvider';
+import { AuthProvider } from '../authentication';
 
 const MainApp = (props) => {
   const { Component, pageProps } = props;
@@ -29,11 +30,13 @@ const MainApp = (props) => {
         <title>Jumbo - Admin Dashboard</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <AppContextProvider>
-        <AppWrapper>
-          <Component {...pageProps} />
-        </AppWrapper>
-      </AppContextProvider>
+      <AuthProvider>
+        <AppContextProvider>
+          <AppWrapper>
+            <Component {...pageProps} />
+          </AppWrapper>
+        </AppContextProvider>
+      </AuthProvider>
     </React.Fragment>
   );
 };

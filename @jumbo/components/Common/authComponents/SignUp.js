@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import { Box } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import IntlMessages from '../../../utils/IntlMessages';
-import Button from '@material-ui/core/Button';
-import { alpha, makeStyles } from '@material-ui/core/styles';
-import CmtImage from '../../../../@coremat/CmtImage';
-import Typography from '@material-ui/core/Typography';
-import AuthWrapper from './AuthWrapper';
-import Link from 'next/link';
-import { useAuth } from '../../../../authentication';
-import { NotificationLoader } from '../../ContentLoader';
+import React, { useState } from "react";
+import { Box } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import IntlMessages from "../../../utils/IntlMessages";
+import Button from "@material-ui/core/Button";
+import { alpha, makeStyles } from "@material-ui/core/styles";
+import CmtImage from "../../../../@coremat/CmtImage";
+import Typography from "@material-ui/core/Typography";
+import AuthWrapper from "./AuthWrapper";
+import Link from "next/link";
+import { useAuth } from "../../../../authentication";
+import { NotificationLoader } from "../../ContentLoader";
 
 const useStyles = makeStyles((theme) => ({
   authThumb: {
     backgroundColor: alpha(theme.palette.primary.main, 0.12),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
-    [theme.breakpoints.up('md')]: {
-      width: '50%',
+    [theme.breakpoints.up("md")]: {
+      width: "50%",
       order: 2,
     },
   },
   authContent: {
     padding: 30,
-    [theme.breakpoints.up('md')]: {
-      width: (props) => (props.variant === 'default' ? '50%' : '100%'),
+    [theme.breakpoints.up("md")]: {
+      width: (props) => (props.variant === "default" ? "50%" : "100%"),
       order: 1,
     },
-    [theme.breakpoints.up('xl')]: {
+    [theme.breakpoints.up("xl")]: {
       padding: 50,
     },
   },
@@ -38,43 +38,49 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
   textFieldRoot: {
-    '& .MuiOutlinedInput-notchedOutline': {
+    "& .MuiOutlinedInput-notchedOutline": {
       borderColor: alpha(theme.palette.common.dark, 0.12),
     },
   },
   textCapital: {
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   textAcc: {
-    textAlign: 'center',
-    '& a': {
+    textAlign: "center",
+    "& a": {
       marginLeft: 4,
     },
   },
   alrTextRoot: {
-    textAlign: 'center',
-    [theme.breakpoints.up('sm')]: {
-      textAlign: 'right',
+    textAlign: "center",
+    [theme.breakpoints.up("sm")]: {
+      textAlign: "right",
     },
   },
 }));
 
 //variant = 'default', 'standard', 'bgColor'
 // eslint-disable-next-line react/prop-types
-const SignUp = ({ variant = 'default', wrapperVariant = 'default' }) => {
+const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
   const classes = useStyles({ variant });
   const { isLoading, error, userSignup, renderSocialMediaLogin } = useAuth();
-  const [name, setName] = useState('Demo User');
-  const [email, setEmail] = useState('demo@example.com');
-  const [password, setPassword] = useState('demo#123');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmed, setPasswordConfirmed] = useState(false);
+  const [PCFocus, setPCFocus] = useState(false);
+  const [brandName, setBrandName] = useState("");
 
   const onSubmit = () => {
-    userSignup({ name, email, password });
+    userSignup({ name, email, password, brandName, username: email });
+  };
+  const confirmPassword = (value) => {
+    if (value == password) setPasswordConfirmed(true);
   };
 
   return (
     <AuthWrapper variant={wrapperVariant}>
-      {variant === 'default' ? (
+      {variant === "default" ? (
         <Box className={classes.authThumb}>
           <CmtImage src="/images/auth/sign-up-img.png" />
         </Box>
@@ -111,6 +117,17 @@ const SignUp = ({ variant = 'default', wrapperVariant = 'default' }) => {
           </Box>
           <Box mb={2}>
             <TextField
+              label={<IntlMessages id="appModule.brandName" />}
+              fullWidth
+              onChange={(event) => setBrandName(event.target.value)}
+              defaultValue={brandName}
+              margin="normal"
+              variant="outlined"
+              className={classes.textFieldRoot}
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
               type="password"
               label={<IntlMessages id="appModule.password" />}
               fullWidth
@@ -121,16 +138,30 @@ const SignUp = ({ variant = 'default', wrapperVariant = 'default' }) => {
               className={classes.textFieldRoot}
             />
           </Box>
-
+          <Box mb={2}>
+            <TextField
+              type="password"
+              error={!passwordConfirmed && PCFocus}
+              onFocus={() => setPCFocus(true)}
+              label={<IntlMessages id="appModule.confirmPassword" />}
+              fullWidth
+              onChange={(event) => confirmPassword(event.target.value)}
+              defaultValue={password}
+              margin="normal"
+              variant="outlined"
+              className={classes.textFieldRoot}
+            />
+          </Box>
           <Box
             display="flex"
-            flexDirection={{ xs: 'column', sm: 'row' }}
-            alignItems={{ sm: 'center' }}
-            justifyContent={{ sm: 'space-between' }}
-            mb={3}>
+            flexDirection={{ xs: "column", sm: "row" }}
+            alignItems={{ sm: "center" }}
+            justifyContent={{ sm: "space-between" }}
+            mb={3}
+          >
             <Box mb={{ xs: 2, sm: 0 }}>
               <Button onClick={onSubmit} variant="contained" color="primary">
-                <IntlMessages id="appModule.regsiter" />
+                <IntlMessages id="appModule.register" />
               </Button>
             </Box>
 

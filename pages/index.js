@@ -1,13 +1,14 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
-import PageLoader from '../@jumbo/components/PageComponents/PageLoader';
+import SignInPage from './signin';
+import { useAuth } from '../authentication';
+import CryptoDashboard from './dashboard/crypto';
 
-const SamplePage = dynamic(() => import('../modules/Pages/SamplePage'), {
-  loading: () => <PageLoader />,
-});
+
+
+
 
 const HomePage = () => {
-  return <SamplePage />;
+  const { authUser } = useAuth();
+  return authUser ? <CryptoDashboard /> : <SignInPage />;
 };
 
 export default HomePage;

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useProvideAuth } from './auth-methods/basic-auth';
+import { useProvideAuth } from './auth-methods/jwt-auth';
 
 const authContext = createContext();
 // Provider component that wraps your app and makes auth object ..

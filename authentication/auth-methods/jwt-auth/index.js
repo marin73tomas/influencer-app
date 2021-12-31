@@ -45,7 +45,7 @@ export const useProvideAuth = () => {
   const userSignup = (user, callbackFun) => {
     fetchStart();
     httpClient
-      .post('auth/register', user)
+      .post('/signup', user)
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();

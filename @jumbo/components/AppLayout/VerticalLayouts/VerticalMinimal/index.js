@@ -11,19 +11,20 @@ import CmtContent from '../../../../../@coremat/CmtLayouts/Vertical/Content';
 import Header from '../../partials/Header';
 import SidebarHeader from '../../partials/SidebarHeader';
 import SideBar from '../../partials/SideBar';
+import Customizer from './Customizer';
 import ContentLoader from '../../../ContentLoader';
 import { SIDEBAR_TYPE } from '../../../../constants/ThemeOptions';
 import Footer from '../../partials/Footer';
-import defaultContext from "../../../contextProvider/AppContextProvider/defaultContext";
+import defaultContext from '../../../contextProvider/AppContextProvider/defaultContext';
 
 const layoutOptions = {
-    headerType: defaultContext.headerType,
-    footerType: 'fixed',
-    sidebarType: SIDEBAR_TYPE.MINI,
-    isSidebarFixed: defaultContext.isSidebarFixed,
-    isSidebarOpen: false,
-    miniSidebarWidth: 80,
-    layoutStyle: defaultContext.layoutType,
+  headerType: defaultContext.headerType,
+  footerType: 'fixed',
+  sidebarType: SIDEBAR_TYPE.MINI,
+  isSidebarFixed: defaultContext.isSidebarFixed,
+  isSidebarOpen: false,
+  miniSidebarWidth: 80,
+  layoutStyle: defaultContext.layoutType,
 };
 
 const VerticalMinimal = ({ className, children }) => {
@@ -49,6 +50,7 @@ const VerticalMinimal = ({ className, children }) => {
       }>
       <CmtContent>
         {children}
+        <Customizer />
         <ContentLoader />
       </CmtContent>
     </CmtVerticalLayout>

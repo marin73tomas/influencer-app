@@ -2,7 +2,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import PageLoader from '../@jumbo/components/PageComponents/PageLoader';
 
-const Custom500 = dynamic(() => import('../modules/Pages/500'), {
+const Custom500 = dynamic(() => import('../modules/ExtraPages/500'), {
   loading: () => <PageLoader />,
 });
 

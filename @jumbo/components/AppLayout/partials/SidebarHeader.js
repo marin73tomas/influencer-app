@@ -7,6 +7,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SidebarThemeContext from '../../../../@coremat/CmtLayouts/SidebarThemeContext/SidebarThemeContext';
+import { useAuth } from '../../../../authentication';
 import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
 const SidebarHeader = () => {
   const { sidebarTheme } = useContext(SidebarThemeContext);
   const classes = useStyles({ sidebarTheme });
+  const { userSignOut } = useAuth();
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -56,12 +58,14 @@ const SidebarHeader = () => {
 
   const onLogoutClick = () => {
     handlePopoverClose();
-    router.push('/').then((r) => r);
+    userSignOut(() => {
+      router.push('/').then((r) => r);
+    });
   };
 
   return (
     <div className={classes.root}>
-      <CmtAvatar src={'https://via.placeholder.com/150x150'} alt="User Avatar" />
+      <CmtAvatar src={'https://via.placeholder.com/150'} alt="User Avatar" />
       <div className={classes.userInfo} onClick={handlePopoverOpen}>
         <div
           className="pointer"

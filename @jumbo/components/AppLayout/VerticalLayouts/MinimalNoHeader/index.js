@@ -13,12 +13,13 @@ import SidebarToggleHandler from '../../../../../@coremat/CmtLayouts/Vertical/Si
 
 import SidebarHeader from '../../partials/SidebarHeader';
 import SideBar from '../../partials/SideBar';
+import Customizer from './Customizer';
 import ContentLoader from '../../../ContentLoader';
 import Alerts from './Alerts';
 import { HEADER_TYPE, SIDEBAR_TYPE } from '../../../../constants/ThemeOptions';
-import defaultContext from "../../../contextProvider/AppContextProvider/defaultContext";
+import defaultContext from '../../../contextProvider/AppContextProvider/defaultContext';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   minimalNoHeader: {
     backgroundColor: 'transparent',
     boxShadow: 'none',
@@ -60,6 +61,7 @@ const MinimalNoHeader = ({ className, children }) => {
       }>
       <CmtContent>
         {children}
+        <Customizer />
         <ContentLoader />
       </CmtContent>
     </CmtVerticalLayout>

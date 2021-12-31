@@ -5,6 +5,7 @@ import CmtHeaderNav from '../../../../../@coremat/CmtLayouts/Horizontal/Header/H
 import CmtHeaderTop from '../../../../../@coremat/CmtLayouts/Horizontal/Header/HeaderTop';
 import CmtHeaderMain from '../../../../../@coremat/CmtLayouts/Horizontal/Header/HeaderMain';
 import HeaderLogin from '../../partials/Header/HeaderLogin';
+import Customizer from '../Customizer';
 import ContentLoader from '../../../ContentLoader';
 import CmtHeader from '../../../../../@coremat/CmtLayouts/Horizontal/Header';
 import CmtSidebar from '../../../../../@coremat/CmtLayouts/Horizontal/Sidebar';
@@ -59,6 +60,7 @@ const HorizontalDark = ({ className, children }) => {
       }>
       <CmtContent>
         {children}
+        <Customizer />
         <ContentLoader />
       </CmtContent>
     </CmtHorizontalLayout>

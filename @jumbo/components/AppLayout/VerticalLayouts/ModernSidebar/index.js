@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/styles';
@@ -9,9 +9,12 @@ import CmtSidebar from '../../../../../@coremat/CmtLayouts/Vertical/Sidebar';
 import CmtContent from '../../../../../@coremat/CmtLayouts/Vertical/Content';
 
 import SideBar from '../../partials/SideBar';
+import Customizer from './Customizer';
 import ContentLoader from '../../../ContentLoader';
 import ActionSideBar from './ActionSideBar';
 import Logo from '../../partials/Logo';
+import { THEME_TYPES } from '../../../../constants/ThemeOptions';
+import AppContext from '../../../contextProvider/AppContextProvider/AppContext';
 import defaultContext from '../../../contextProvider/AppContextProvider/defaultContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +35,11 @@ const layoutOptions = {
   layoutStyle: defaultContext.layoutType,
 };
 
+// eslint-disable-next-line react/prop-types
 const ModernSideBar = ({ children, className }) => {
   const classes = useStyles();
+
+  const { themeType } = useContext(AppContext);
 
   return (
     <CmtVerticalLayout
@@ -42,13 +48,14 @@ const ModernSideBar = ({ children, className }) => {
       sidebar={
         <CmtSidebar actionBar={<ActionSideBar />}>
           <Hidden mdDown>
-            <Logo className={classes.sidebarHeader} />
+            <Logo color={themeType !== THEME_TYPES.LIGHT ? 'white' : 'dark'} className={classes.sidebarHeader} />
           </Hidden>
           <SideBar />
         </CmtSidebar>
       }>
       <CmtContent>
         {children}
+        <Customizer />
         <ContentLoader />
       </CmtContent>
     </CmtVerticalLayout>
