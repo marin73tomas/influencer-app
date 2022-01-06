@@ -1,36 +1,52 @@
-import { useEffect, useState } from 'react';
-import { httpClient } from './config';
+import { useEffect, useState } from "react";
+import { httpClient } from "./config";
 
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loadingAuthUser, setLoadingAuthUser] = useState(true);
   const [isLoading, setLoading] = useState(false);
 
   const fetchStart = () => {
     setLoading(true);
-    setError('');
+    setError("");
   };
 
   const fetchSuccess = () => {
     setLoading(false);
-    setError('');
+    setError("");
   };
 
   const fetchError = (error) => {
     setLoading(false);
     setError(error);
   };
-
-  const userLogin = (user, callbackFun) => {
+  const userFacebookLogin = () => {
     fetchStart();
+    const URL = `/auth/callback/facebook`;
     httpClient
-      .post('auth/login', user)
+      .get(URL)
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();
-          httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;
-          localStorage.setItem('token', data.token.access_token);
+        } else {
+          fetchError(data.error);
+        }
+      })
+      .catch(function (error) {
+        fetchError(error.message);
+      });
+  };
+  const userLogin = (user, callbackFun) => {
+    fetchStart();
+    httpClient
+      .post("/signin", user)
+      .then(({ data }) => {
+        if (data.result) {
+          fetchSuccess();
+          httpClient.defaults.headers.common["Authorization"] =
+            "Bearer " + data.token.access_token;
+          localStorage.setItem("token", data.token.access_token);
           getAuthUser();
           if (callbackFun) callbackFun();
         } else {
@@ -45,12 +61,13 @@ export const useProvideAuth = () => {
   const userSignup = (user, callbackFun) => {
     fetchStart();
     httpClient
-      .post('/signup', user)
+      .post("/signup", user)
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();
-          localStorage.setItem('token', data.token.access_token);
-          httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;
+          localStorage.setItem("token", data.token.access_token);
+          httpClient.defaults.headers.common["Authorization"] =
+            "Bearer " + data.token.access_token;
           getAuthUser();
           if (callbackFun) callbackFun();
         } else {
@@ -85,12 +102,12 @@ export const useProvideAuth = () => {
   const userSignOut = (callbackFun) => {
     fetchStart();
     httpClient
-      .post('auth/logout')
+      .post("auth/logout")
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();
-          httpClient.defaults.headers.common['Authorization'] = '';
-          localStorage.removeItem('token');
+          httpClient.defaults.headers.common["Authorization"] = "";
+          localStorage.removeItem("token");
           setAuthUser(false);
           if (callbackFun) callbackFun();
         } else {
@@ -105,7 +122,7 @@ export const useProvideAuth = () => {
   const getAuthUser = () => {
     fetchStart();
     httpClient
-      .post('auth/me')
+      .post("api/session")
       .then(({ data }) => {
         if (data.user) {
           fetchSuccess();
@@ -115,7 +132,7 @@ export const useProvideAuth = () => {
         }
       })
       .catch(function (error) {
-        httpClient.defaults.headers.common['Authorization'] = '';
+        httpClient.defaults.headers.common["Authorization"] = "";
         fetchError(error.message);
       });
   };
@@ -126,13 +143,13 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+      httpClient.defaults.headers.common["Authorization"] = "Bearer " + token;
     }
 
     httpClient
-      .post('auth/me')
+      .post("auth/me")
       .then(({ data }) => {
         if (data.user) {
           setAuthUser(data.user);
@@ -140,8 +157,8 @@ export const useProvideAuth = () => {
         setLoadingAuthUser(false);
       })
       .catch(function () {
-        localStorage.removeItem('token');
-        httpClient.defaults.headers.common['Authorization'] = '';
+        localStorage.removeItem("token");
+        httpClient.defaults.headers.common["Authorization"] = "";
         setLoadingAuthUser(false);
       });
   }, []);
@@ -161,5 +178,6 @@ export const useProvideAuth = () => {
     renderSocialMediaLogin,
     sendPasswordResetEmail,
     confirmPasswordReset,
+    userFacebookLogin,
   };
 };

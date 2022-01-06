@@ -1,22 +1,27 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../index';
-import PageLoader from '../../@jumbo/components/PageComponents/PageLoader';
-
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import PageLoader from "../../@jumbo/components/PageComponents/PageLoader";
+import { useAuth } from "../index";
 // eslint-disable-next-line react/prop-types
 const AuthPage = ({ children }) => {
-  const { loadingAuthUser, authUser, setError } = useAuth();
+  const { setError } = useAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loadingAuthUser && authUser) {
-      router.push('/dashboard/crypto').then((r) => r);
+    if (status === "loading" && session && session.user) {
+      router.push("/dashboard/crypto").then((r) => r);
     }
 
-    return () => setError('');
-  }, [authUser, loadingAuthUser]);
+    return () => setError("");
+  }, [session, status]);
 
-  return authUser && loadingAuthUser ? <PageLoader /> : children;
+  return session && session.user && status === "loading" ? (
+    <PageLoader />
+  ) : (
+    children
+  );
 };
 
 export default AuthPage;

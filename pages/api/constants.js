@@ -7,10 +7,13 @@ const USERS_API_URL = BASE_URL + "/wp-json/wp/v2/users";
 
 const MEDIA_API_URL = BASE_URL + "/wp-json/wp/v2/media";
 
+const LOGIN_URL = BASE_URL + "/wp-json/influencer-app/login";
+
 
 export const EnvConfig = {
   BASE_URL,
   POSTS_API_URL,
   USERS_API_URL,
   MEDIA_API_URL,
+  LOGIN_URL,
 };

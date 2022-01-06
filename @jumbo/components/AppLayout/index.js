@@ -1,43 +1,45 @@
-import React, { useContext } from 'react';
-import AppContext from '../contextProvider/AppContextProvider/AppContext';
-import globalStyles from '../../../theme/GlobalCss';
-import '../../../services/api/index';
-import { Box } from '@material-ui/core';
-import VerticalDefault from './VerticalLayouts/VerticalDefault';
-import { LAYOUT_TYPES } from '../../constants/ThemeOptions';
-import VerticalMinimal from './VerticalLayouts/VerticalMinimal';
-import MinimalNoHeader from './VerticalLayouts/MinimalNoHeader';
-import ModernSideBar from './VerticalLayouts/ModernSidebar';
-import HorizontalDefault from './HorizontalLayouts/HorizontalDefault';
-import HorizontalDark from './HorizontalLayouts/HorizontalDark';
-import HorizontalMinimal from './HorizontalLayouts/HorizontalMinimal';
-import HorizontalTopMenu from './HorizontalLayouts/HorizontalTopMenu';
-import PageLoader from '../PageComponents/PageLoader';
-import { useRouter } from 'next/router';
-import { useAuth } from '../../../authentication';
+import React, { useContext } from "react";
+import AppContext from "../contextProvider/AppContextProvider/AppContext";
+import globalStyles from "../../../theme/GlobalCss";
+import "../../../services/api/index";
+import { Box } from "@material-ui/core";
+import VerticalDefault from "./VerticalLayouts/VerticalDefault";
+import { LAYOUT_TYPES } from "../../constants/ThemeOptions";
+import VerticalMinimal from "./VerticalLayouts/VerticalMinimal";
+import MinimalNoHeader from "./VerticalLayouts/MinimalNoHeader";
+import ModernSideBar from "./VerticalLayouts/ModernSidebar";
+import HorizontalDefault from "./HorizontalLayouts/HorizontalDefault";
+import HorizontalDark from "./HorizontalLayouts/HorizontalDark";
+import HorizontalMinimal from "./HorizontalLayouts/HorizontalMinimal";
+import HorizontalTopMenu from "./HorizontalLayouts/HorizontalTopMenu";
+import PageLoader from "../PageComponents/PageLoader";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const AppLayout = ({ children }) => {
   const { layout } = useContext(AppContext);
-  const { authUser, isLoadingUser } = useAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
   globalStyles();
 
-  if (isLoadingUser) {
+  if (status === "loading") {
     return <PageLoader />;
   }
 
   if (
-    !authUser &&
-    (router.pathname === '/signin' || router.pathname === '/signup' || router.pathname === '/forgot-password')
+    !session &&
+    (router.pathname === "/signin" ||
+      router.pathname === "/signup" ||
+      router.pathname === "/forgot-password")
   ) {
     return (
-      <Box display="flex" width={1} style={{ minHeight: '100vh' }}>
+      <Box display="flex" width={1} style={{ minHeight: "100vh" }}>
         {children}
       </Box>
     );
   }
 
-  if (authUser) {
+  if (session && session.user) {
     switch (layout) {
       case LAYOUT_TYPES.VERTICAL_DEFAULT: {
         return <VerticalDefault children={children} />;
@@ -69,7 +71,7 @@ const AppLayout = ({ children }) => {
   }
 
   return (
-    <Box display="flex" width={1} style={{ minHeight: '100vh' }}>
+    <Box display="flex" width={1} style={{ minHeight: "100vh" }}>
       {children}
     </Box>
   );

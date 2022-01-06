@@ -13,6 +13,10 @@ import AuthWrapper from './AuthWrapper';
 import { useAuth } from '../../../../authentication';
 import { NotificationLoader } from '../../ContentLoader';
 
+import {  signIn } from "next-auth/react";
+
+
+
 const useStyles = makeStyles((theme) => ({
   authThumb: {
     backgroundColor: alpha(theme.palette.primary.main, 0.12),
@@ -53,22 +57,28 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  
 }));
 //variant = 'default', 'standard'
 // eslint-disable-next-line react/prop-types
-const SignIn = ({ variant = 'default', wrapperVariant = 'default' }) => {
+const SignIn = ({ variant = 'default', wrapperVariant = 'default' , providers}) => {
   const classes = useStyles({ variant });
-  const { isLoading, error, userLogin, renderSocialMediaLogin } = useAuth();
-  const [email, setEmail] = useState('demo@example.com');
-  const [password, setPassword] = useState('demo#123');
+  const { isLoading, error, userLogin, userFacebookLogin } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const onSubmit = () => {
-    userLogin({ email, password });
+    userLogin({ username: email, password });
   };
+
+  const onFacebookSubmit = () => {
+    userFacebookLogin();
+  };
+
 
   return (
     <AuthWrapper variant={wrapperVariant}>
-      {variant === 'default' ? (
+      {variant === "default" ? (
         <Box className={classes.authThumb}>
           <CmtImage src="/images/auth/login-img.png" />
         </Box>
@@ -104,7 +114,12 @@ const SignIn = ({ variant = 'default', wrapperVariant = 'default' }) => {
               className={classes.textFieldRoot}
             />
           </Box>
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={5}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
             <FormControlLabel
               className={classes.formcontrolLabelRoot}
               control={<Checkbox name="checkedA" />}
@@ -119,7 +134,12 @@ const SignIn = ({ variant = 'default', wrapperVariant = 'default' }) => {
             </Box>
           </Box>
 
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={5}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
             <Button onClick={onSubmit} variant="contained" color="primary">
               <IntlMessages id="appModule.signIn" />
             </Button>
@@ -133,9 +153,18 @@ const SignIn = ({ variant = 'default', wrapperVariant = 'default' }) => {
             </Box>
           </Box>
         </form>
-
-        {renderSocialMediaLogin()}
-
+        <Box mb={2} mx="auto" display="flex" justifyContent="center">
+          {Object.values(providers).map((provider) => (
+            <div key={provider.name}>
+              <button
+                className="loginBtn loginBtn--facebook"
+                onClick={() => signIn(provider.id)}
+              >
+                Continue with {provider.name}
+              </button>
+            </div>
+          ))}
+        </Box>
         <NotificationLoader loading={isLoading} error={error} />
       </Box>
     </AuthWrapper>

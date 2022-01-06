@@ -10,6 +10,13 @@ import AuthWrapper from "./AuthWrapper";
 import Link from "next/link";
 import { useAuth } from "../../../../authentication";
 import { NotificationLoader } from "../../ContentLoader";
+import Snackbar from "@material-ui/core/Snackbar";
+import { Slide } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 const useStyles = makeStyles((theme) => ({
   authThumb: {
@@ -70,9 +77,36 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
   const [passwordConfirmed, setPasswordConfirmed] = useState(false);
   const [PCFocus, setPCFocus] = useState(false);
   const [brandName, setBrandName] = useState("");
+  const [signUpError, setSignUpError] = useState("");
 
   const onSubmit = () => {
-    userSignup({ name, email, password, brandName, username: email });
+    setSignUpError("");
+    if (!passwordConfirmed) {
+      setSignUpError("Passwords do not match.");
+      return;
+    }
+    if (!brandName) {
+      setSignUpError("Brand Name is required.");
+      return;
+    }
+    const data = {
+      name,
+      email,
+      password,
+      meta: {
+        brand_name: brandName,
+      },
+      username: email,
+    };
+    for (let key of Object.keys(data)) {
+      if (!data[key]) {
+        setSignUpError(
+          `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`
+        );
+        return;
+      }
+    }
+    userSignup(data);
   };
   const confirmPassword = (value) => {
     if (value == password) setPasswordConfirmed(true);
@@ -86,15 +120,27 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
         </Box>
       ) : null}
       <Box className={classes.authContent}>
+        <Snackbar
+          autoHideDuration={6000}
+          open={Boolean(signUpError)}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          TransitionComponent={SlideTransition}
+        >
+          <Alert variant="filled" severity="error">
+            {signUpError}
+          </Alert>
+        </Snackbar>
+
         <Box mb={7}>
           <CmtImage src="/images/logo.png" />
         </Box>
         <Typography component="div" variant="h1" className={classes.titleRoot}>
           Create an account
         </Typography>
-        <form>
+        <form noValidate autoComplete="off">
           <Box mb={2}>
             <TextField
+              required
               label={<IntlMessages id="appModule.name" />}
               fullWidth
               onChange={(event) => setName(event.target.value)}
@@ -106,6 +152,7 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
           </Box>
           <Box mb={2}>
             <TextField
+              required
               label={<IntlMessages id="appModule.email" />}
               fullWidth
               onChange={(event) => setEmail(event.target.value)}
@@ -117,6 +164,7 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
           </Box>
           <Box mb={2}>
             <TextField
+              required
               label={<IntlMessages id="appModule.brandName" />}
               fullWidth
               onChange={(event) => setBrandName(event.target.value)}
@@ -128,6 +176,7 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
           </Box>
           <Box mb={2}>
             <TextField
+              required
               type="password"
               label={<IntlMessages id="appModule.password" />}
               fullWidth
@@ -140,8 +189,9 @@ const SignUp = ({ variant = "default", wrapperVariant = "default" }) => {
           </Box>
           <Box mb={2}>
             <TextField
+              required
               type="password"
-              error={!passwordConfirmed && PCFocus}
+              error={password && !passwordConfirmed && PCFocus}
               onFocus={() => setPCFocus(true)}
               label={<IntlMessages id="appModule.confirmPassword" />}
               fullWidth
