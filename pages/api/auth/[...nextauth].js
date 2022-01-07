@@ -8,6 +8,8 @@ export default NextAuth({
       clientSecret: process.env.FACEBOOK_SECRET,
     }),
   ],
-
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.SECRET,
 });
