@@ -1,3 +1,4 @@
+import React, { useState, useEffect} from "react";
 import SignInPage from "./signin";
 import { useSession, signIn, signOut } from "next-auth/react";
 import CryptoDashboard from "./dashboard/crypto";
