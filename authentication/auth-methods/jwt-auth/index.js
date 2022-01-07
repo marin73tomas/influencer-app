@@ -122,7 +122,7 @@ export const useProvideAuth = () => {
 
   const getAuthUser = () => {
     fetchStart();
-    if (session.user) {
+    if (session && session.user) {
       fetchSuccess();
       setAuthUser(session.user);
     } else {
@@ -136,7 +136,7 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    if (session.user) {
+    if (session && session.user) {
       setAuthUser(session.user);
     }
     setLoadingAuthUser(status === "loading");
