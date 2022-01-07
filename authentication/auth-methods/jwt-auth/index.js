@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { httpClient } from "./config";
-
+import { useSession } from "next-auth/react";
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
   const [error, setError] = useState("");
   const [loadingAuthUser, setLoadingAuthUser] = useState(true);
+  const { data: session, status } = useSession();
   const [isLoading, setLoading] = useState(false);
 
   const fetchStart = () => {
@@ -143,24 +144,10 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      httpClient.defaults.headers.common["Authorization"] = "Bearer " + token;
+    if (session.user) {
+      setAuthUser(session.user);
     }
-
-    httpClient
-      .post("auth/me")
-      .then(({ data }) => {
-        if (data.user) {
-          setAuthUser(data.user);
-        }
-        setLoadingAuthUser(false);
-      })
-      .catch(function () {
-        localStorage.removeItem("token");
-        httpClient.defaults.headers.common["Authorization"] = "";
-        setLoadingAuthUser(false);
-      });
+    setLoadingAuthUser(status === "loading");
   }, []);
 
   // Return the user object and auth methods
