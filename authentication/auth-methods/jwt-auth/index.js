@@ -122,20 +122,12 @@ export const useProvideAuth = () => {
 
   const getAuthUser = () => {
     fetchStart();
-    httpClient
-      .post("api/session")
-      .then(({ data }) => {
-        if (data.user) {
-          fetchSuccess();
-          setAuthUser(data.user);
-        } else {
-          fetchError(data.error);
-        }
-      })
-      .catch(function (error) {
-        httpClient.defaults.headers.common["Authorization"] = "";
-        fetchError(error.message);
-      });
+    if (session.user) {
+      fetchSuccess();
+      setAuthUser(session.user);
+    } else {
+      fetchError("Could not load user session.");
+    }
   };
 
   // Subscribe to user on mount
