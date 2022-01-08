@@ -1,30 +1,36 @@
-import React, { useContext } from 'react';
-import { MenuItem, MenuList, Paper, Popover, Typography } from '@material-ui/core';
-import CmtAvatar from '../../../../@coremat/CmtAvatar';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PersonIcon from '@material-ui/icons/Person';
-import SettingsIcon from '@material-ui/icons/Settings';
-import SidebarThemeContext from '../../../../@coremat/CmtLayouts/SidebarThemeContext/SidebarThemeContext';
-import { useAuth } from '../../../../authentication';
-import { useRouter } from 'next/router';
-
+import React, { useContext } from "react";
+import {
+  MenuItem,
+  MenuList,
+  Paper,
+  Popover,
+  Typography,
+} from "@material-ui/core";
+import CmtAvatar from "../../../../@coremat/CmtAvatar";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import PersonIcon from "@material-ui/icons/Person";
+import SettingsIcon from "@material-ui/icons/Settings";
+import SidebarThemeContext from "../../../../@coremat/CmtLayouts/SidebarThemeContext/SidebarThemeContext";
+import { useAuth } from "../../../../authentication";
+import { useRouter } from "next/router";
+import { useSession, signIn, signOut } from "next-auth/react";
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '30px 16px 12px 16px',
+    padding: "30px 16px 12px 16px",
     borderBottom: (props) => `solid 1px ${props.sidebarTheme.borderColor}`,
   },
   userInfo: {
     paddingTop: 24,
-    transition: 'all 0.1s ease',
+    transition: "all 0.1s ease",
     height: 75,
     opacity: 1,
-    '.Cmt-miniLayout .Cmt-sidebar-content:not(:hover) &': {
+    ".Cmt-miniLayout .Cmt-sidebar-content:not(:hover) &": {
       height: 0,
       paddingTop: 0,
       opacity: 0,
-      transition: 'all 0.3s ease',
+      transition: "all 0.3s ease",
     },
   },
   userTitle: {
@@ -43,7 +49,7 @@ const SidebarHeader = () => {
   const classes = useStyles({ sidebarTheme });
   const { userSignOut } = useAuth();
   const router = useRouter();
-
+  const { data: session } = useSession();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handlePopoverOpen = (event) => {
@@ -58,27 +64,32 @@ const SidebarHeader = () => {
 
   const onLogoutClick = () => {
     handlePopoverClose();
-    userSignOut(() => {
-      router.push('/').then((r) => r);
-    });
+    signOut()
   };
-
+  console.log(session);
   return (
     <div className={classes.root}>
-      <CmtAvatar src={'https://via.placeholder.com/150'} alt="User Avatar" />
+      <CmtAvatar src={session.user.image} alt="User Avatar" />
       <div className={classes.userInfo} onClick={handlePopoverOpen}>
         <div
           className="pointer"
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}>
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+          }}
+        >
           <div className="mr-2">
-            <Typography className={classes.userTitle} component="h3" variant="h6">
-              Robert Johnson
+            <Typography
+              className={classes.userTitle}
+              component="h3"
+              variant="h6"
+            >
+              {session.user.name}
             </Typography>
-            <Typography className={classes.userSubTitle}>robert.johnson@gmail.com</Typography>
+            <Typography className={classes.userSubTitle}>
+              {session.user.email}
+            </Typography>
           </div>
           <ArrowDropDownIcon />
         </div>
@@ -91,13 +102,14 @@ const SidebarHeader = () => {
           container={anchorEl}
           onClose={handlePopoverClose}
           anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
+            vertical: "center",
+            horizontal: "right",
           }}
           transformOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
-          }}>
+            vertical: "center",
+            horizontal: "right",
+          }}
+        >
           <Paper elevation={8}>
             <MenuList>
               <MenuItem onClick={handlePopoverClose}>

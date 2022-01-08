@@ -4,6 +4,7 @@ import axios from "axios";
 export default function handler(req, res) {
   if (req.method === "POST") {
     const { name, email, password, meta, username } = req.body;
+    console.log({ name, email, password, meta, username });
     axios
       .post(
         EnvConfig.USERS_API_URL,
