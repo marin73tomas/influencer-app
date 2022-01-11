@@ -15,6 +15,8 @@ import "./styles.css";
 import AppContextProvider from "../@jumbo/components/contextProvider/AppContextProvider";
 import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "../authentication";
+
+
 const MainApp = ({ Component, pageProps: { session, ...pageProps } }) => {
   React.useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");

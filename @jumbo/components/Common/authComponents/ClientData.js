@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import IntlMessages from "../../../utils/IntlMessages";
 import Button from "@material-ui/core/Button";
@@ -6,14 +6,12 @@ import { Box } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import CmtImage from "../../../../@coremat/CmtImage";
 import Typography from "@material-ui/core/Typography";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "next/link";
+import CheckoutForm from "./CheckOutForm";
 import AuthWrapper from "./AuthWrapper";
 import { useAuth } from "../../../../authentication";
 import { NotificationLoader } from "../../ContentLoader";
-
-import { signIn } from "next-auth/react";
+import getStripe from "../../../../services/getStripe";
+import { Elements } from "@stripe/react-stripe-js";
 
 const useStyles = makeStyles((theme) => ({
   authThumb: {
@@ -58,24 +56,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 //variant = 'default', 'standard'
 // eslint-disable-next-line react/prop-types
-const SignIn = ({
+const ClientData = ({
   variant = "default",
   wrapperVariant = "default",
-  providers,
+  paymentIntent,
 }) => {
   const classes = useStyles({ variant });
-  const { isLoading, error, userLogin, userFacebookLogin } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  
-  const onSubmit = () => {
-    userLogin({ username: email, password });
+  const { isLoading, error } = useAuth();
+  const options = {
+    // passing the client secret obtained from the server
+    clientSecret: "{{CLIENT_SECRET}}",
   };
+  const stripePromise = getStripe();
 
-  const onFacebookSubmit = () => {
-    userFacebookLogin();
-  };
+  const onSubmit = () => {};
+
+  useEffect(() => {}, []);
 
   return (
     <AuthWrapper variant={wrapperVariant}>
@@ -96,44 +92,16 @@ const SignIn = ({
             <TextField
               label={<IntlMessages id="appModule.email" />}
               fullWidth
-              onChange={(event) => setEmail(event.target.value)}
-              defaultValue={email}
+              // onChange={(event) => setEmail(event.target.value)}
+              // defaultvalue={email}
               margin="normal"
               variant="outlined"
               className={classes.textFieldRoot}
             />
           </Box>
-          <Box mb={2}>
-            <TextField
-              type="password"
-              label={<IntlMessages id="appModule.password" />}
-              fullWidth
-              onChange={(event) => setPassword(event.target.value)}
-              defaultValue={password}
-              margin="normal"
-              variant="outlined"
-              className={classes.textFieldRoot}
-            />
-          </Box>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={5}
-          >
-            <FormControlLabel
-              className={classes.formcontrolLabelRoot}
-              control={<Checkbox name="checkedA" />}
-              label="Remember me"
-            />
-            <Box component="p" fontSize={{ xs: 12, sm: 16 }}>
-              <Link href="/forgot-password">
-                <a>
-                  <IntlMessages id="appModule.forgotPassword" />
-                </a>
-              </Link>
-            </Box>
-          </Box>
+          <Elements stripe={stripePromise} options={options}>
+            <CheckoutForm paymentIntent={paymentIntent} />
+          </Elements>
 
           <Box
             display="flex"
@@ -142,34 +110,14 @@ const SignIn = ({
             mb={5}
           >
             <Button onClick={onSubmit} variant="contained" color="primary">
-              <IntlMessages id="appModule.signIn" />
+              <IntlMessages id="appModule.ClientData" />
             </Button>
-
-            <Box component="p" fontSize={{ xs: 12, sm: 16 }}>
-              <Link href="/signup">
-                <a>
-                  <IntlMessages id="signIn.signUp" />
-                </a>
-              </Link>
-            </Box>
           </Box>
         </form>
-        <Box mb={2} mx="auto" display="flex" justifyContent="center">
-          {Object.values(providers || {}).map((provider) => (
-            <div key={provider.name}>
-              <button
-                className="loginBtn loginBtn--facebook"
-                onClick={() => signIn(provider.id)}
-              >
-                Continue with {provider.name}
-              </button>
-            </div>
-          ))}
-        </Box>
         <NotificationLoader loading={isLoading} error={error} />
       </Box>
     </AuthWrapper>
   );
 };
 
-export default SignIn;
+export default ClientData;

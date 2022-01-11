@@ -16,19 +16,23 @@ export default NextAuth({
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       try {
-        const userdata = await axios.get("/api/user", {
+        const host = process.env.NEXTAUTH_URL;
+
+        const userdata = await axios.get(`${host}/api/user`, {
           params: { username: user.email },
         });
-        if (!userdata || object.keys(userdata).length <= 0) {
-          await axios.post("/api/signup", {
+
+        if (!userdata || !userdata.data || userdata.data.length <= 0) {
+          const response = await axios.post(`${host}/api/signup`, {
             email: user.email,
             username: user.email,
             password: uuidv4(),
             name: user.name,
           });
+          console.log({ response });
         }
       } catch (error) {
-        console.log(error);
+        console.log({ error });
       }
       return true;
     },
