@@ -1,62 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import SignInPage from "./signin";
 import ClientDataPage from "./client_data";
 import { useSession } from "next-auth/react";
 import CryptoDashboard from "./dashboard/crypto";
-import { getProviders } from "next-auth/react";
 import { getSession } from "next-auth/react";
-import axios from "axios";
-import Stripe from "stripe";
 
-const HomePage = ({ renderClientDataPage, paymentIntent }) => {
+import renderClientDataPage from "../services/renderClientPage";
+
+const HomePage = ({ renderWrapper }) => {
   const { data: session } = useSession();
-  const [providers, setProviders] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const res = await getProviders();
+  if (renderWrapper) return <ClientDataPage />;
 
-      setProviders(res);
-    })();
-  }, []);
-
-  if (renderClientDataPage) return <ClientDataPage paymentIntent={paymentIntent} />;
-  return session ? <CryptoDashboard /> : <SignInPage providers={providers} />;
+  return session ? <CryptoDashboard /> : <SignInPage />;
 };
 
-export async function getServerSideProps(ctx) {
-  const session = await getSession(ctx);
-  let renderClientDataPage = false;
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 1000,
-    currency: "gbp",
-  });
-
-  try {
-    if (session && session.user) {
-      const host = process.env.NEXTAUTH_URL;
-      const user = session.user;
-      const userdata = await axios.get(`${host}/api/user`, {
-        params: { username: user.email },
-      });
-
-      if (userdata && userdata.data && userdata.data.length != 0) {
-        const meta = userdata.data[0].meta;
-        console.log({ meta });
-        const { brand_name, creditCardDetails } = meta;
-
-        if (Array.isArray(brand_name) || Array.isArray(creditCardDetails)) {
-          renderClientDataPage = true;
-        }
-      }
-    }
-  } catch (error) {
-    console.log({ error });
-  }
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  const renderWrapper = await renderClientDataPage(
+    session,
+    process.env.NEXTAUTH_URL
+  );
   return {
-    props: { renderClientDataPage, paymentIntent },
+    props: { renderWrapper }, // will be passed to the page component as props
   };
 }
+
 export default HomePage;

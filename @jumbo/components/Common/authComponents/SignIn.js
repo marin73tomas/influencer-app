@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import IntlMessages from "../../../utils/IntlMessages";
 import Button from "@material-ui/core/Button";
@@ -12,7 +12,7 @@ import Link from "next/link";
 import AuthWrapper from "./AuthWrapper";
 import { useAuth } from "../../../../authentication";
 import { NotificationLoader } from "../../ContentLoader";
-
+import { getProviders } from "next-auth/react";
 import { signIn } from "next-auth/react";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,17 +58,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 //variant = 'default', 'standard'
 // eslint-disable-next-line react/prop-types
-const SignIn = ({
-  variant = "default",
-  wrapperVariant = "default",
-  providers,
-}) => {
+const SignIn = ({ variant = "default", wrapperVariant = "default" }) => {
   const classes = useStyles({ variant });
   const { isLoading, error, userLogin, userFacebookLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [providers, setProviders] = useState(null);
 
-  
+  useEffect(() => {
+    (async () => {
+      const res = await getProviders();
+
+      setProviders(res);
+    })();
+  }, []);
+
   const onSubmit = () => {
     userLogin({ username: email, password });
   };

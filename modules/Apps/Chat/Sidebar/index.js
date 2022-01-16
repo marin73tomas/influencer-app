@@ -31,7 +31,7 @@ const Sidebar = () => {
       dispatch(getContactUsers({ search: searchText }));
     }
   }, [dispatch, searchText, value]);
-
+  
   const classes = useStyles({ isCollapsed: isSideBarCollapsed });
   return (
     <Box className={classes.inBuildAppSidebar}>

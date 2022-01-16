@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import stripe from "@stripe/stripe-js";
+import stripe from "@stripe/stripe-js"
 import {
   PaymentElement,
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ paymentIntent }) {
+export default function CheckoutForm() {
   const stripe = useStripe();
 
   const elements = useElements();
@@ -20,7 +20,9 @@ export default function CheckoutForm({ paymentIntent }) {
       return;
     }
 
-    const clientSecret = paymentIntent;
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
 
     if (!clientSecret) {
       return;

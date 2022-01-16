@@ -37,7 +37,7 @@ const MainApp = ({ Component, pageProps: { session, ...pageProps } }) => {
       <SessionProvider session={session}>
         <AuthProvider>
           <AppContextProvider>
-            <AppWrapper>
+            <AppWrapper >
               <Component {...pageProps} />
             </AppWrapper>
           </AppContextProvider>

@@ -63,3 +63,7 @@
 .loginBtn--google:focus {
   background: #E74B37;
 }
+
+#payment-element #submit{
+  display: none !important;
+}

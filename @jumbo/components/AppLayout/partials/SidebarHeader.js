@@ -66,7 +66,7 @@ const SidebarHeader = () => {
     handlePopoverClose();
     signOut()
   };
-  console.log(session);
+
   return (
     <div className={classes.root}>
       <CmtAvatar src={session.user.image} alt="User Avatar" />

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import AppContext from "../contextProvider/AppContextProvider/AppContext";
 import globalStyles from "../../../theme/GlobalCss";
 import "../../../services/api/index";
@@ -16,13 +16,45 @@ import PageLoader from "../PageComponents/PageLoader";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
+import renderClientDataPage from "../../../services/renderClientPage";
+
+function useAsync(asyncFn, onSuccess, setLoading, session, status) {
+  useEffect(() => {
+    if (status === "authenticated") {
+      setLoading(true);
+      let isActive = true;
+
+      (async function () {
+        try {
+          const data = await asyncFn(session);
+          if (isActive) onSuccess(data);
+        } catch (error) {
+          console.log(error);
+        }
+        setLoading(false);
+      })();
+
+      return () => {
+        isActive = false;
+        setLoading(false);
+      };
+    }
+  }, [status]);
+}
+
 const AppLayout = ({ children }) => {
   const { layout } = useContext(AppContext);
+
+  const [renderWrapper, setRenderWrapper] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
+
+  useAsync(renderClientDataPage, setRenderWrapper, setLoading, session, status);
+
   const router = useRouter();
   globalStyles();
 
-  if (status === "loading") {
+  if (status === "loading" || loading) {
     return <PageLoader />;
   }
 
@@ -39,7 +71,7 @@ const AppLayout = ({ children }) => {
     );
   }
 
-  if (session && session.user) {
+  if (status === "authenticated" && session?.user && !renderWrapper) {
     switch (layout) {
       case LAYOUT_TYPES.VERTICAL_DEFAULT: {
         return <VerticalDefault children={children} />;

@@ -56,22 +56,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 //variant = 'default', 'standard'
 // eslint-disable-next-line react/prop-types
-const ClientData = ({
-  variant = "default",
-  wrapperVariant = "default",
-  paymentIntent,
-}) => {
+const ClientData = ({ variant = "default", wrapperVariant = "default" }) => {
   const classes = useStyles({ variant });
-  const { isLoading, error } = useAuth();
-  const options = {
-    // passing the client secret obtained from the server
-    clientSecret: "{{CLIENT_SECRET}}",
-  };
+  const { isLoading, setLoading, error, fetchStripePaymentIntent } = useAuth();
+  const [options, setOptions] = useState({});
+  useEffect(() => {
+    setLoading(true);
+
+    (async function () {
+      try{
+      const paymentIntent = await fetchStripePaymentIntent();
+      console.log({paymentIntent})
+      setOptions({ clientSecret: paymentIntent?.data?.client_secret });
+      setLoading(false);
+      }catch(error){
+        console.log(error)
+        setLoading(false);
+      }
+    })();
+
+
+  }, []);
+
   const stripePromise = getStripe();
 
   const onSubmit = () => {};
-
-  useEffect(() => {}, []);
 
   return (
     <AuthWrapper variant={wrapperVariant}>
@@ -90,7 +99,7 @@ const ClientData = ({
         <form>
           <Box mb={2}>
             <TextField
-              label={<IntlMessages id="appModule.email" />}
+              label={<IntlMessages id="appModule.brandName" />}
               fullWidth
               // onChange={(event) => setEmail(event.target.value)}
               // defaultvalue={email}
@@ -99,10 +108,18 @@ const ClientData = ({
               className={classes.textFieldRoot}
             />
           </Box>
-          <Elements stripe={stripePromise} options={options}>
-            <CheckoutForm paymentIntent={paymentIntent} />
-          </Elements>
 
+          {options.clientSecret && (
+            <Elements stripe={stripePromise} options={options}>
+              <Typography
+                component="label"
+                className={classes.titleRoot}
+              >
+                Card Details
+              </Typography>
+              <CheckoutForm />
+            </Elements>
+          )}
           <Box
             display="flex"
             alignItems="center"

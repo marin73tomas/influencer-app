@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { httpClient } from "./config";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
   const [error, setError] = useState("");
@@ -8,6 +9,23 @@ export const useProvideAuth = () => {
   const { data: session, status } = useSession();
   const [isLoading, setLoading] = useState(false);
 
+ 
+  const fetchStripePaymentIntent = () => {
+    const url = "/api/stripe/payment_intent";
+
+    return axios
+      .get(url)
+      .then(({ message, data }) => {
+        if (data) {
+          return data;
+        } else {
+          throw new Error(message);
+        }
+      })
+      .catch(function (error) {
+        throw new Error(error);
+      });
+  };
   const fetchStart = () => {
     setLoading(true);
     setError("");
@@ -148,6 +166,7 @@ export const useProvideAuth = () => {
     isLoading,
     authUser,
     error,
+    setLoading,
     setError,
     setAuthUser,
     getAuthUser,
@@ -158,5 +177,7 @@ export const useProvideAuth = () => {
     sendPasswordResetEmail,
     confirmPasswordReset,
     userFacebookLogin,
+    fetchStripePaymentIntent,
+   
   };
 };

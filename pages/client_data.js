@@ -10,10 +10,9 @@ const ClientData = dynamic(
   }
 );
 
-const ClientDataPage = ({ paymentIntent }) => (
+const ClientDataPage = () => (
   <AuthPage>
     <ClientData
-      paymentIntent={paymentIntent}
       variant="standard"
       wrapperVariant="bgColor"
     />

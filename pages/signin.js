@@ -7,9 +7,9 @@ const SignIn = dynamic(() => import('../@jumbo/components/Common/authComponents/
   loading: () => <PageLoader />,
 });
 
-const SignInPage = ({ providers }) => (
+const SignInPage = () => (
   <AuthPage>
-    <SignIn providers={providers} variant="standard" wrapperVariant="bgColor" />
+    <SignIn  variant="standard" wrapperVariant="bgColor" />
   </AuthPage>
 );
 
